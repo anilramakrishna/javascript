@@ -6,7 +6,7 @@ let tempdata1 = ""
 const errmsg = document.querySelector(".error-msg");
 const input1 = document.querySelector(".search-input")
 
-const fetch_data = () => {
+const fetch_data = async () => {
     console.log("clicked")
     const city = document.querySelector(".search-input").value;
     console.log(city);
@@ -16,25 +16,48 @@ const fetch_data = () => {
     }
     const wapi = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${api_key}`;
     const fapi = `https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${api_key}`;
-    fetch(wapi)
-        .then(response => response.json())
-        .then(data => {
-            console.log(data);
-            displayData(data);
-        })
-        .catch(err => {
-            errmsg.innerText = "please enter a valid city";
-            document.querySelector(".search-input").value = '';
-        })
-    fetch(fapi)
-        .then(res => res.json())
-        .then(data => {
-            tempdata1 = data;
-            displayForecast(data.list);
-        })
-        .catch(err => {
-            console.log("error");
-        })
+    try {
+        console.log("wapi...")
+        let res = await fetch(wapi);
+        let data = await res.json();
+        console.log(data);
+        displayData(data);
+    }
+    catch {
+        errmsg.innerText = "please enter a valid city";
+        document.querySelector(".search-input").value = '';
+        document.querySelector("#weather-icon").src = '';
+    }
+    console.log("middle..")
+    try {
+        console.log("fapi...");
+        let res = await fetch(fapi);
+        let data = await res.json();
+        console.log(data);
+        displayForecast(data.list);
+    }
+    catch {
+        console.log("error");
+    }
+    // fetch(wapi)
+    //     .then(response => response.json())
+    //     .then(data => {
+    //         console.log(data);
+    //         displayData(data);
+    //     })
+    //     .catch(err => {
+    //         errmsg.innerText = "please enter a valid city";
+    //         document.querySelector(".search-input").value = '';
+    //     })
+    // fetch(fapi)
+    //     .then(res => res.json())
+    //     .then(data => {
+    //         tempdata1 = data;
+    //         displayForecast(data.list);
+    //     })
+    //     .catch(err => {
+    //         console.log("error");
+    //     })
 }
 
 
